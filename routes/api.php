@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\api\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +14,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/', function () {
+    return response()->json( [
+        'success' => false,
+        'message' => 'Not Authenticated',
+    ], 400 );
+})->name('login');
+
+
+Route::middleware('auth:sanctum')->group( function () {
+    Route::delete('logout', 'App\Http\Controllers\api\AuthController@logout');
+});
+
+Route::controller(AuthController::class)->group(function(){
+    Route::post('register', 'register');
+    Route::post('login', 'login');
+
 });
