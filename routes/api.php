@@ -24,6 +24,10 @@ Route::get('/', function () {
 
 Route::middleware('auth:sanctum')->group( function () {
     Route::delete('logout', 'App\Http\Controllers\api\AuthController@logout');
+    Route::resource ('restaurant', 'App\Http\Controllers\api\RestaurantController');
+    Route::resource ('meal', 'App\Http\Controllers\api\MealController');
+    Route::resource ('order', 'App\Http\Controllers\api\OrderController');
+
 });
 
 Route::controller(AuthController::class)->group(function(){
