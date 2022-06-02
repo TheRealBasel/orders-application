@@ -17,7 +17,6 @@ class AuthController extends Controller
             'phone_number' => 'required|digits:10',
             'password' => 'required|min:6',
             'name' => 'required'
-
         ]);
  
         if ($validator->fails()) {

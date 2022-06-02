@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\OrderItem;
 
 class Order extends Model
 {
@@ -14,22 +15,15 @@ class Order extends Model
         'user_id', 'restaurant_id'
     ];
 
-    /**
-     * Get the user that owns the Order
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function user(): BelongsTo
-    {
+    public function user() {
         return $this->belongsTo(User::class);
     }
-    /**
-     * Get the restaurant that owns the Order
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function restaurant(): BelongsTo
-    {
+
+    public function restaurant() {
         return $this->belongsTo(Restaurant::class);
+    }
+
+    public function items() {
+        return $this->hasMany(OrderItem::class);
     }
 }

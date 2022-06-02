@@ -20,7 +20,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::all();
+        $orders = Order::with('items')->get();
         return response()->json( [
             'success' => true,
             'orders' => $orders
@@ -57,6 +57,12 @@ class OrderController extends Controller
                         'message' => 'You already have an open order.'
                     ], 400 );
                 }else{
+                    if ( !$request->items || empty($request->items) || sizeof($request->items) < 1 ){
+                        return response()->json( [
+                            'success' => false,
+                            'message' => "You can't make order without any meal"
+                        ], 400 );
+                    }
                     $new_order = new Order();
                     $new_order->user_id = $user->id;
                     $new_order->restaurant_id = $restaurant->id;
@@ -88,8 +94,8 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order = Order::find($id);
-        if ( $order && sizeof ($order) > 0 ){
+        $order = Order::with('items')->find($id);
+        if ( $order ){
             return response()->json( [
                 'success' => true,
                 'order' => $order

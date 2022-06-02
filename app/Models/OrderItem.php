@@ -16,22 +16,11 @@ class OrderItem extends Model
         'order_id', 'meal_id', 'price', 'quantity'
     ];
 
-    /**
-     * Get the user that owns the OrderItem
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function order(): BelongsTo
-    {
+    public function order(){
         return $this->belongsTo(Order::class);
     }
-    /**
-     * Get the restaurant that owns the OrderItem
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function meal(): BelongsTo
-    {
+
+    public function meal(){
         return $this->belongsTo(Meal::class);
     }
 }
