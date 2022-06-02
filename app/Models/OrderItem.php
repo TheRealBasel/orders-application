@@ -5,31 +5,33 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\Order;
+use App\Models\Meal;
 
-class Order extends Model
+class OrderItem extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'restaurant_id'
+        'order_id', 'meal_id', 'price', 'quantity'
     ];
 
     /**
-     * Get the user that owns the Order
+     * Get the user that owns the OrderItem
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user(): BelongsTo
+    public function order(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Order::class);
     }
     /**
-     * Get the restaurant that owns the Order
+     * Get the restaurant that owns the OrderItem
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function restaurant(): BelongsTo
+    public function meal(): BelongsTo
     {
-        return $this->belongsTo(Restaurant::class);
+        return $this->belongsTo(Meal::class);
     }
 }

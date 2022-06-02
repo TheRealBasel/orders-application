@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Restaurant;
 use App\Models\Meal;
+use App\Models\OrderItem;
+
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -18,7 +20,11 @@ class OrderController extends Controller
      */
     public function index()
     {
-
+        $orders = Order::all();
+        return response()->json( [
+            'success' => true,
+            'orders' => $orders
+        ], 200 );
     }
 
     /**
@@ -44,10 +50,31 @@ class OrderController extends Controller
             if ( $restaurant ){
                 $user = Auth::user();
                 $order = Order::where('user_id', $user->id)->where('restaurant_id', $restaurant->id)->get();
-                if ( $order ){
-                    dd('avaliable');
+                $items = $request->items;
+                if ( $order && !empty($order) && sizeof($order) > 0 ){
+                    return response()->json( [
+                        'success' => false,
+                        'message' => 'You already have an open order.'
+                    ], 400 );
                 }else{
-                    dd('not ava');
+                    $new_order = new Order();
+                    $new_order->user_id = $user->id;
+                    $new_order->restaurant_id = $restaurant->id;
+                    $new_order->save();
+
+                    foreach ($request->items as $key => $item) {
+                        $new_item = new OrderItem();
+                        $new_item->order_id = $new_order->id;
+                        $new_item->meal_id = $item['meal'];
+                        $new_item->quantity = $item['quantity'];
+                        $new_item->price = $item['price'];
+                        $new_item->save();
+                    }
+
+                    return response()->json( [
+                        'success' => true,
+                        'message' => $new_order
+                    ], 200 );
                 }
             }
         }
@@ -61,7 +88,18 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        //
+        $order = Order::find($id);
+        if ( $order && sizeof ($order) > 0 ){
+            return response()->json( [
+                'success' => true,
+                'order' => $order
+            ], 200 );
+        }else{
+            return response()->json( [
+                'success' => false,
+                'message' => "There is no order with this id"
+            ], 400 );
+        }
     }
 
     /**
