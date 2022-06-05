@@ -45,44 +45,34 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        if ( $request->restaurant ){
-            $restaurant = Restaurant::find($request->restaurant);
-            if ( $restaurant ){
-                $user = Auth::user();
-                $order = Order::where('user_id', $user->id)->where('restaurant_id', $restaurant->id)->get();
-                $items = $request->items;
-                if ( $order && !empty($order) && sizeof($order) > 0 ){
-                    return response()->json( [
-                        'success' => false,
-                        'message' => 'You already have an open order.'
-                    ], 400 );
-                }else{
-                    if ( !$request->items || empty($request->items) || sizeof($request->items) < 1 ){
-                        return response()->json( [
-                            'success' => false,
-                            'message' => "You can't make order without any meal"
-                        ], 400 );
-                    }
-                    $new_order = new Order();
-                    $new_order->user_id = $user->id;
-                    $new_order->restaurant_id = $restaurant->id;
-                    $new_order->save();
+        $validated_request = $request->validate([
+            'restaurant_name' => ['required', 'exists:restaurants,name'],
+            'items' => ['required', 'array']
+        ]);
 
-                    foreach ($request->items as $key => $item) {
-                        $new_item = new OrderItem();
-                        $new_item->order_id = $new_order->id;
-                        $new_item->meal_id = $item['meal'];
-                        $new_item->quantity = $item['quantity'];
-                        $new_item->price = $item['price'];
-                        $new_item->save();
-                    }
+        $restaurant = Restaurant::find($request->restaurant);
 
-                    return response()->json( [
-                        'success' => true,
-                        'message' => $new_order
-                    ], 200 );
-                }
-            }
+        $user = Auth::user();
+
+        $created_order = Order::create([
+            'user_id' => $uesr->id,
+            'restaurant_id' => $restaurant->id
+        ]);
+
+        foreach ($validated_request->items as $item) {
+            OrderItem::create([
+                'order_id' => $created_order->id,
+                'meal_id' => $item->meal_id,
+                'quantity' => $item->quantity,
+                'price' => $item->price
+            ]);
+        }
+
+        return response()->json( [
+            'success' => true,
+            'message' => $created_order
+        ], 200 );
+                
         }
     }
 

@@ -40,21 +40,20 @@ class RestaurantController extends Controller
      */
     public function store(Request $request)
     {
-        $restaurant = new Restaurant();
+        $validated_request = $request->validate([
+            'restaurant_name' => ['requierd', 'unique:restaurants,name']
+        ]);
 
-        $restaurant->name = $request->name;
 
-        
+        $created_restaurant = Restaurant::create([
+            'name' => $validated_request->restaurant_name
+        ]);
 
-        return $restaurant->save() ? 
-        response()->json( [
+        return response()->json( [
             'success' => true,
-            'message' => 'Restaurant created successfully'
-        ], 200 ):
-        response()->json( [
-            'success' => false,
-            'message' => 'Failed to create a restaurant',
-        ], 400 );
+            'message' => 'Restaurant created successfully',
+            'data' => $created_restaurant
+        ], 200 );
     }
 
     /**
