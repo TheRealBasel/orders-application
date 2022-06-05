@@ -53,7 +53,7 @@ class RestaurantController extends Controller
             'success' => true,
             'message' => 'Restaurant created successfully',
             'data' => $created_restaurant
-        ], 200 );
+        ], 201 );
     }
 
     /**
