@@ -19,17 +19,15 @@ use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\api\RestaurantController;
 use App\Http\Controllers\api\MealController;
 
-Route::delete('logout', [AuthController::class, 'logout']);
 
 Route::middleware('auth:sanctum')->group( function () {
     Route::resource ('restaurant', RestaurantController::class);
     Route::resource ('meal', MealController::class);
     Route::resource ('order', OrderController::class);
-
+    Route::delete('logout', [AuthController::class,'logout']);
 });
 
 Route::controller(AuthController::class)->group(function(){
     Route::post('register', 'register');
     Route::post('login', 'login');
-
 });
