@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\api\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,19 +11,20 @@ use App\Http\Controllers\api\AuthController;
 |
 */
 
-Route::get('/', function () {
-    return response()->json( [
-        'success' => false,
-        'message' => 'Not Authenticated',
-    ], 400 );
-})->name('login');
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\OrderController;
+use App\Http\Controllers\api\RestaurantController;
+use App\Http\Controllers\api\MealController;
+
+Route::delete('logout', [AuthController::class, 'logout']);
 
 Route::middleware('auth:sanctum')->group( function () {
-    Route::delete('logout', 'App\Http\Controllers\api\AuthController@logout');
-    Route::resource ('restaurant', 'App\Http\Controllers\api\RestaurantController');
-    Route::resource ('meal', 'App\Http\Controllers\api\MealController');
-    Route::resource ('order', 'App\Http\Controllers\api\OrderController');
+    Route::resource ('restaurant', RestaurantController::class);
+    Route::resource ('meal', MealController::class);
+    Route::resource ('order', MealController::class);
 
 });
 

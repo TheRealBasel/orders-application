@@ -41,42 +41,27 @@ class MealController extends Controller
      */
     public function store(Request $request)
     {
-        $restaurant = Restaurant::find($request->restaurant);
-        if ( $restaurant ){
-            if ( !$request->name || empty($request->name) ) {
-                response()->json( [
-                    'success' => false,
-                    'message' => 'Meal name is not valid',
-                ], 400 );
-            }
-            if ( !$request->price || empty($request->price) ) {
-                response()->json( [
-                    'success' => false,
-                    'message' => 'Price is not valid',
-                ], 400 );
-            }
-            $meal = new Meal();
+        $validated_request = $request->validation([
+            'restaurant_name' => ['required', 'exists:restaurants,name'],
+            'meal_name' => ['required'],
+            'meal_price' => ['required','numeric']
+        ]);
 
-            $meal->name = $request->name;
-            $meal->price = $request->price;
-    
-    
-            return $restaurant->Meals()->save($meal) ? 
-            response()->json( [
-                'success' => true,
-                'message' => 'Meal created successfully'
-            ], 200 ):
-            response()->json( [
-                'success' => false,
-                'message' => 'Failed to create a meal',
-            ], 400 );
-    
-        }else{
-            response()->json( [
-                'success' => false,
-                'message' => 'Restaurant not found',
-            ], 400 );
-        }
+        $restaurant = Restaurant::find($validated_request->restaurant_name);
+        
+        $meal = Meal::create([
+            'name' => $validated_request->meal_name,
+            'price' => $validated_request->meal_price
+        ]);
+
+        $restaurant->Meals()->save($meal);
+
+        return response()->json( [
+            'success' => true,
+            'message' => 'Meal created successfully',
+            'data' => $meal
+        ], 200 );
+
     }
 
     /**
