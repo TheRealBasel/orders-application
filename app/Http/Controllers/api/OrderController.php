@@ -70,10 +70,10 @@ class OrderController extends Controller
 
         return response()->json( [
             'success' => true,
-            'message' => $created_order
-        ], 200 );
+            'message' => 'Order created successfully',
+            'data' => $created_order
+        ], 201 );
                 
-        }
     }
 
     /**
@@ -93,8 +93,8 @@ class OrderController extends Controller
         }else{
             return response()->json( [
                 'success' => false,
-                'message' => "There is no order with this id"
-            ], 400 );
+                'message' => "Order not found"
+            ], 404 );
         }
     }
 

@@ -33,7 +33,7 @@ class AuthController extends Controller
                 'token' => $user->createToken('orders_app')->plainTextToken
             ],
             'message' => 'You have registerd successfully.'
-        ], 200 );
+        ], 201 );
     
     }
 

@@ -60,7 +60,7 @@ class MealController extends Controller
             'success' => true,
             'message' => 'Meal created successfully',
             'data' => $meal
-        ], 200 );
+        ], 201 );
 
     }
 
