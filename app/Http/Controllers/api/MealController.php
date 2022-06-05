@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Meal;
 use App\Models\Restaurant;
 
+use App\Http\Resources\MealResource;
+use App\Http\Resources\MealCollection;
+
 class MealController extends Controller
 {
     /**
@@ -16,11 +19,7 @@ class MealController extends Controller
      */
     public function index()
     {
-        $meals = Meal::all();
-        return response()->json( [
-            'success' => true,
-            'meals' => $meals
-        ], 200 );
+        return new MealCollection(Meal::paginate());
     }
 
     /**
@@ -47,7 +46,7 @@ class MealController extends Controller
             'meal_price' => ['required','numeric']
         ]);
 
-        $restaurant = Restaurant::find($validated_request->restaurant_name);
+        $restaurant = Restaurant::findOrFail($validated_request->restaurant_name);
         
         $meal = Meal::create([
             'name' => $validated_request->meal_name,
@@ -56,11 +55,7 @@ class MealController extends Controller
 
         $restaurant->Meals()->save($meal);
 
-        return response()->json( [
-            'success' => true,
-            'message' => 'Meal created successfully',
-            'data' => $meal
-        ], 201 );
+        return new MealResource($meal);
 
     }
 

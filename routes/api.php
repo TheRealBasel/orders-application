@@ -24,7 +24,7 @@ Route::delete('logout', [AuthController::class, 'logout']);
 Route::middleware('auth:sanctum')->group( function () {
     Route::resource ('restaurant', RestaurantController::class);
     Route::resource ('meal', MealController::class);
-    Route::resource ('order', MealController::class);
+    Route::resource ('order', OrderController::class);
 
 });
 

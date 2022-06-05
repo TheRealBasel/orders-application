@@ -11,6 +11,9 @@ use App\Models\OrderItem;
 
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Resources\OrderResource;
+use App\Http\Resources\OrderCollection;
+
 class OrderController extends Controller
 {
     /**
@@ -20,11 +23,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('items')->get();
-        return response()->json( [
-            'success' => true,
-            'orders' => $orders
-        ], 200 );
+        return new OrderCollection (Order::with('items')->get());
     }
 
     /**
@@ -50,7 +49,7 @@ class OrderController extends Controller
             'items' => ['required', 'array']
         ]);
 
-        $restaurant = Restaurant::find($request->restaurant);
+        $restaurant = Restaurant::findOrFail($request->restaurant);
 
         $user = Auth::user();
 
@@ -68,12 +67,7 @@ class OrderController extends Controller
             ]);
         }
 
-        return response()->json( [
-            'success' => true,
-            'message' => 'Order created successfully',
-            'data' => $created_order
-        ], 201 );
-                
+        return new OrderResource($created_order);  
     }
 
     /**
@@ -84,18 +78,7 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order = Order::with('items')->find($id);
-        if ( $order ){
-            return response()->json( [
-                'success' => true,
-                'order' => $order
-            ], 200 );
-        }else{
-            return response()->json( [
-                'success' => false,
-                'message' => "Order not found"
-            ], 404 );
-        }
+        return new OrderResource(Order::with('items')->findOrFail($id));
     }
 
     /**

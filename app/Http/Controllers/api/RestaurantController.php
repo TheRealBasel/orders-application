@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Restaurant;
+use App\Http\Resources\RestaurantResource;
+use App\Http\Resources\RestaurantCollection;
 
 class RestaurantController extends Controller
 {
@@ -15,11 +17,12 @@ class RestaurantController extends Controller
      */
     public function index()
     {
-        $restaurants = Restaurant::all();
-        return response()->json( [
-            'success' => true,
-            'restaurants' => $restaurants
-        ], 200 );
+        return new RestaurantCollection(Restaurant::paginate());
+
+        // return response()->json( [
+        //     'success' => true,
+        //     'restaurants' => $restaurants
+        // ], 200 );
     }
 
     /**
@@ -49,11 +52,12 @@ class RestaurantController extends Controller
             'name' => $validated_request->restaurant_name
         ]);
 
-        return response()->json( [
-            'success' => true,
-            'message' => 'Restaurant created successfully',
-            'data' => $created_restaurant
-        ], 201 );
+        // return response()->json( [
+        //     'success' => true,
+        //     'message' => 'Restaurant created successfully',
+        //     'data' => $created_restaurant
+        // ], 201 );
+        return new RestaurantResource($created_restaurant);
     }
 
     /**
@@ -64,7 +68,8 @@ class RestaurantController extends Controller
      */
     public function show($id)
     {
-        //
+        return new RestaurantResource(Restaurant::findOrFail($id));
+
     }
 
     /**
